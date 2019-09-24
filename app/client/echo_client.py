@@ -1,10 +1,12 @@
 from tcp_client import TcpClient
 
+
 class EchoClient(TcpClient):
     def __init__(self, ip, port):
         super().__init__(ip, port)
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     c = EchoClient('localhost', 30000)
     while True:
         s = input()

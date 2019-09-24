@@ -12,7 +12,8 @@ CLIENT_FACING_SERVERS = {
     2: ('localhost', 15007),
     3: ('localhost', 15008),
     4: ('localhost', 15009)
-
 }
 
 HEARTBEAT_TIMEOUT_MS = 50
+ELECTION_TIMEOUT_MIN_MS = 150
+ELECTION_TIMEOUT_MAX_MS = 300

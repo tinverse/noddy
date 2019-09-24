@@ -5,7 +5,8 @@ import logging
 from net.conn_handlers import ThreadedHandler
 from net.tcp_server import TcpServer
 
-class _KeyValStore: # pylint: disable=too-few-public-methods
+
+class _KeyValStore:  # pylint: disable=too-few-public-methods
     """Server's job is to function as a key/val store"""
     def __init__(self):
         logging.debug("In KeyValStore __init__")
@@ -63,7 +64,8 @@ class _KeyValStore: # pylint: disable=too-few-public-methods
     def __del__(self):
         logging.error("Calling KVStore del")
 
-class ThreadedKeyValServer(TcpServer, ThreadedHandler, _KeyValStore): # pylint: disable=too-few-public-methods
+
+class ThreadedKeyValServer(TcpServer, ThreadedHandler, _KeyValStore):  # pylint: disable=too-few-public-methods
     """The key val store"""
     def __init__(self, ip, port, backlog):
         super().__init__(ip, port, backlog)
@@ -74,11 +76,13 @@ class ThreadedKeyValServer(TcpServer, ThreadedHandler, _KeyValStore): # pylint: 
         for thread in self.client_threads:
             thread.join()
 
+
 def main():
     """Main fn"""
     logging.basicConfig(level=logging.DEBUG)
     server = ThreadedKeyValServer('localhost', 30000, 5)
     server.run()
+
 
 if __name__ == '__main__':
     main()

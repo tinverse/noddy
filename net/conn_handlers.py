@@ -2,13 +2,13 @@
 import logging
 import threading
 
-class SequentialHandler: # pylint: disable=too-few-public-methods
+
+class SequentialHandler:  # pylint: disable=too-few-public-methods
     """Threaded Handler - Every conn connection is processed in a separate
     thread"""
     def __init__(self):
         logging.debug("In SequentialHandler __init__")
         super().__init__()
-        self.conns = []
         logging.debug("Created SequentialHandler")
 
     def handle(self, conn, addr):
@@ -16,13 +16,9 @@ class SequentialHandler: # pylint: disable=too-few-public-methods
         logging.debug("Connection from: %s", addr)
         # pylint: disable=no-member
         self.respond(conn)
-        self.conns.append(conn)
-
-    def __del__(self):
-        pass
 
 
-class ThreadedHandler: # pylint: disable=too-few-public-methods
+class ThreadedHandler:  # pylint: disable=too-few-public-methods
     """Threaded Handler - Every conn connection is processed in a separate
     thread"""
     def __init__(self):
@@ -34,4 +30,4 @@ class ThreadedHandler: # pylint: disable=too-few-public-methods
         """Create and execute in separate thread"""
         logging.debug("Connection from: %s", addr)
         # pylint: disable=no-member
-        threading.Thread(target=self.respond, args=(conn,)).start()
+        threading.Thread(target=self.respond, args=(conn, )).start()

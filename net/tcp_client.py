@@ -4,9 +4,10 @@ import socket
 from net import socket_ops
 
 BUF_SIZE = 512
+
+
 class TcpClient:
     """Creates a client socket on an ip:port."""
-
     def __init__(self, ip, port):
         """ Create a socket and listen """
         super().__init__()
@@ -18,16 +19,18 @@ class TcpClient:
 
     def send(self, msg):
         """wrap socket send fn."""
-        logging.debug(msg)
-        msg = msg.encode()
-        logging.debug("sending: {0}".format(msg))
+        # logging.debug(msg)
+        if not isinstance(msg, bytes):
+            msg = msg.encode()
+        # logging.debug("sending: {0}".format(msg))
         socket_ops.send_message(self.conn, msg)
 
     def recv(self):
         """wrap socket recv fn."""
         data = socket_ops.recv_message(self.conn)
-        logging.debug("recv:%s", data)
-        return data.decode("utf-8")
+        # logging.debug("recv:%s", data)
+        # return data.decode("utf-8")
+        return data
 
     def close(self):
         """Close the tcp socket.

@@ -7,9 +7,10 @@ import signal
 
 from kvserver import ThreadedKeyValServer
 
-CHECKPOINT_FILE="store.pkl"
+CHECKPOINT_FILE = "store.pkl"
 
-class ThreadedKeyValChkptServer(ThreadedKeyValServer): # pylint: disable=too-few-public-methods
+
+class ThreadedKeyValChkptServer(ThreadedKeyValServer):  # pylint: disable=too-few-public-methods
     def __init__(self, ip, port, backlog):
         logging.debug("ThreadedKeyValChkptServer  __init__")
         signal.signal(signal.SIGINT, self.checkpt_handler)
@@ -35,6 +36,6 @@ def main():
     server = ThreadedKeyValChkptServer('localhost', 30000, 5)
     server.run()
 
+
 if __name__ == '__main__':
     main()
-
