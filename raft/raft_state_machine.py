@@ -15,21 +15,22 @@ from .message import EventId, HeartbeatTimeout,\
 
 class RaftTimer:
     """Puts an event in the event queue periodically"""
-    def __init__(self, timeout_sec, event, event_queue):
+    def __init__(self, event, event_queue, timeout_sec=1): # default 1s timer unless overridden_sec
         self.done = threading.Event()
-        self.timeout = timeout_sec
         self.event = pickle.dumps(event)
         self.event_queue = event_queue
+        self.timeout_sec = timeout_sec
         self._reset = False
 
     def start(self):
         """Start the timer thread"""
-        threading.Thread(target=self._run_timer, args=(self.timeout,))
+        threading.Thread(target=self._run_timer, )
 
-    def _run_timer(self, timeout):
+    def _run_timer(self):
         """Callback for thread."""
+
         while not self.done.is_set():
-            time.sleep(timeout)
+            time.sleep(self.timeout_sec)
             if not self._reset: # if reset == False
                 self.event_queue.put(self.event)
                 self._reset = False
@@ -38,6 +39,13 @@ class RaftTimer:
 
     def reset(self):
         self._reset = True
+
+
+class HeartbeatTimer(RaftTimer):
+    def __init__(self, event_queue):
+        event = HeartbeatTimeout()
+        super().__init__(event, event_queue, config.HEARTBEAT_TIMEOUT_MS/1000)
+
 
 class ElectionTimer(RaftTimer):
     """Generate timeout event at expiration"""
@@ -53,8 +61,9 @@ class ElectionTimer(RaftTimer):
             timeout = int(os.urandom(4).hex(), 16) & (0x7FFFFFFF)
             return (timeout / (math.pow(2, 31) -1)) * (300 - 150) + 150
 
-        timeout = _calc_timeout()
-        threading.Thread(target=super()._run_timer, args=(timeout,))
+        self.timeout_sec = _calc_timeout()
+        threading.Thread(target=super()._run_timer)
+
 
 class CandidateState(State):
     """"Candidate State"""
@@ -86,10 +95,7 @@ class LeaderState(State):
     """"Leader State """
     def __init__(self, event_queue):
         super().__init__("LEADER")
-        self.heartbeat_thread = None
-        event = HeartbeatTimeout()
-        timeout_sec = config.HEARTBEAT_TIMEOUT_MS/1000 # wait for 50ms
-        self.timer = RaftTimer(timeout_sec, event, event_queue)
+        self.timer = HeartbeatTimer(event_queue)
 
     def enter(self):
         self.timer.start()
