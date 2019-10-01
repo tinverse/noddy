@@ -10,23 +10,15 @@ from .message import AskVoteRequest, AskVoteResponse,\
 LogEntry = namedtuple("LogEntry", ["term", "value"])
 
 
-class RaftLog:
+class RaftLog(list):
     """The Raft Log"""
     def __init__(self):
-        self.log = []
-
-    def __len__(self):
-        return len(self.log)
-
-    def __repr__(self):
-        return "RaftLog({0})".format(self.log)
-
-    def __getitem__(self, index):
-        return self.log[index]
+        super().__init__()
 
     def __setitem__(self, index, value):
-        self.log[index] = value
-
+        if isinstance(value, list):
+            value = LogEntry(term=value[0], value=value[1])
+        super().__setitem__(index, value)
 
 class AlgoState:
     """Stores Algorithm state"""

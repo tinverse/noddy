@@ -30,7 +30,7 @@ def test_process_ask_vote_request_response(raft_empty_controller,
     ret = raft_empty_controller.process_ask_vote_response(
         msg.result, msg.current_term)
 
-    assert ret is False
+    assert ret is None
     assert raft_empty_controller.votes_received == 2
 
 
@@ -85,3 +85,8 @@ def test_process_append_entries_request_response(fig_6):
     assert leader.log == follower.log
     assert response.leader_id == leader.server_id
     assert response.server_id == follower.server_id
+
+def test_append_single_entry():
+    r = RaftController(0)
+    r.log.append(LogEntry(2,3))
+    f = RaftController(1)

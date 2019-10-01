@@ -85,7 +85,7 @@ class RaftServer:
                 msg = pickle.dumps(msg)  # this encodes msg to bytes
                 self._socks[dest].send(msg)
             except IOError:
-                if not self.shutdown:
+                if not self.shutdown_event.is_set():
                     logging.error("%d: Send to %d failed", self.server_id,
                                   dest)
                     self._socks[dest] = None

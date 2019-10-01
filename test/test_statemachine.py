@@ -6,7 +6,7 @@ import pytest
 
 from algo.controller import LogEntry
 from algo.raft_state_machine import RaftStateMachine, RaftEventTimer
-from algo.message import AppendEntriesResponse, AskVoteResponse, EventId, ElectionTimeout, HeartbeatTimeout, ShutdownRequest, BecomeLeader
+from algo.message import AppendEntriesResponse, AskVoteResponse, EventId, ElectionTimeout, HeartbeatTimeout, ShutdownRequest
 
 
 class NullQueue:
@@ -95,8 +95,6 @@ def test_initialize_sm(raft_sm):
 
     assert controller.votes_received == 3
 
-    raft_sm.step(BecomeLeader())
-
     assert raft_sm.current_state.name == 'LEADER'
     assert controller.current_term == 1
 
@@ -134,6 +132,5 @@ def test_initialize_sm(raft_sm):
             while raft_sm.recv_queues[server_id]:
                 msg = raft_sm.recv_queues[server_id].pop()
                 assert msg.msg_id == EventId.APPEND_ENTRIES_REQUEST
-                logging.debug("msg.__dict__: %s", msg.__dict__)
 
     raft_sm.step(ShutdownRequest())
