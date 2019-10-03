@@ -3,6 +3,7 @@ import time
 
 from algo.config import CLUSTER_SERVERS
 from algo.raft import Raft
+from algo.controller import LogEntry
 
 
 def test_leader_election():
@@ -33,8 +34,32 @@ def test_leader_election():
             assert True
             break
 
+    leader_id = [
+        server.server_id for server in servers
+        if server.current_state.name == 'LEADER'
+    ][0]
+    servers[leader_id].algo.log.append(LogEntry(server.algo.current_term, 1))
+    replicated = [False for i in CLUSTER_SERVERS]
+    niter = 0
+    while True:
+        niter += 1
+        time.sleep(0.5)
+        if niter >= 10:
+            assert False
+        for server in servers:
+            if (not replicated[server.server_id]
+                ) and server.algo.log == servers[leader_id].algo.log:
+                replicated[server.server_id] = True
+        if all(replicated):
+            assert True
+            break
+
     for server in servers:
         threading.Thread(target=server.shutdown).start()
 
     for t in threads:
         t.join()
+
+
+def test_log_replication():
+    """"""

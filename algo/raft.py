@@ -154,7 +154,8 @@ class Raft(RaftServer, RaftStateMachine):
         self.cluster_thread.join()
 
     def print_status(self):
-        logging.info("%d: %s", self.server_id, self.current_state.name)
+        logging.info("%d: %s %s", self.server_id, self.current_state.name,
+                     self.algo.log)
 
     def shutdown(self):
         self.print_status()

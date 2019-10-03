@@ -15,10 +15,6 @@ class RaftLog(list):
     def __init__(self):
         super().__init__()
 
-    def __setitem__(self, index, value):
-        if isinstance(value, list):
-            value = LogEntry(term=value[0], value=value[1])
-        super().__setitem__(index, value)
 
 class AlgoState:
     """Stores Algorithm state"""
@@ -166,8 +162,10 @@ class LogReplication:
 
         if entries:  # not a heartbeat
 
+            print("%d: %s", self.server_id, entries)
             # Append
-            self.log[current_index:] = [LogEntry(e[0], e[1]) for e in entries]
+            self.log[
+                current_index:] = entries  #[LogEntry(e[0], e[1]) for e in entries]
 
             if leader_commit > self.commit_index:
                 index_last_new_entry = len(self.log) - 1

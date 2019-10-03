@@ -86,7 +86,8 @@ def test_process_append_entries_request_response(fig_6):
     assert response.leader_id == leader.server_id
     assert response.server_id == follower.server_id
 
+
 def test_append_single_entry():
     r = RaftController(0)
-    r.log.append(LogEntry(2,3))
+    r.log.append(LogEntry(2, 3))
     f = RaftController(1)
